@@ -54,7 +54,7 @@ usersRouter.post("/login", async (req, res, next) => {
 
       // 4. Send token as a response
 
-      res.redirect(`${process.env.FE_URL}/googleRedirect?accessToken=${token}`)
+      res.redirect(`${process.env.FE_DEV_URL}/googleRedirect?accessToken=${token}`)
     } else {
       // 401
 
@@ -94,7 +94,7 @@ usersRouter.get("/googleLogin", passport.authenticate("google", { scope: ["profi
 usersRouter.get("/googleRedirect", passport.authenticate("google", { session: false }), async (req, res, next) => {
   // this URL needs to match EXACTLY the one configured on google.com
   try {
-    res.redirect(`${process.env.FE_URL}/users?accessToken=${req.user.token}`)
+    res.redirect(`${process.env.FE_DEV_URL}/users?accessToken=${req.user.token}`)
   } catch (error) {
     next(error)
   }

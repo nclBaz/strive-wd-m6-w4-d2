@@ -35,7 +35,39 @@ const policeOfficerMiddleware = (req, res, next) => {
 }
 // ** GLOBAL LEVEL MIDDLEWARES **
 
-server.use(cors()) // YOU NEED THIS TO CONNECT YOUR FE TO THIS BE
+// *********************************** CORS ********************************
+
+// CROSS-ORIGIN RESOURCE SHARING
+
+/*
+EXAMPLES OF DIFFERENT ORIGINS:
+
+1. FE=http://localhost:3000 & BE=http://localhost:3001 <-- 2 different port numbers, they represent different origins
+2. FE=https://mywonderfulfe.com & BE=https://mywonderfulbe.com <-- 2 different domains, they represent different origins
+3. FE=https://domain.com & BE=http://domain.com <-- 2 different protocols, they represent different origins
+
+*/
+
+const whitelist = [process.env.FE_DEV_URL, process.env.FE_PROD_URL]
+
+server.use(
+  cors({
+    origin: (origin, next) => {
+      // YOU NEED THIS TO CONNECT YOUR FE TO THIS BE
+      console.log("CURRENT ORIGIN: ", origin)
+
+      if (whitelist.indexOf(origin) !== -1) {
+        // if origin is in the whitelist --> next
+        next(null, true)
+      } else {
+        // if origin is NOT in the whitelist --> trigger an error
+        next(createError(400, `CORS ERROR! Your origin: ${origin} is not in the whitelist!`))
+      }
+    },
+  })
+)
+// *************************************************************************
+
 server.use(loggerMiddleware)
 // server.use(policeOfficerMiddleware)
 server.use(express.json()) // if you don't add this line BEFORE the endpoints, all requests' bodies will be UNDEFINED
